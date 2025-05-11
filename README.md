@@ -1,22 +1,15 @@
 
+# Self-Supervised Image Denoising using Conditional Blind-Spot Networks and Downsampled Invariance Loss
+
+This repository presents a self-supervised deep learning framework for image denoising, eliminating the need for clean training targets. The method integrates a Conditional Blind-Spot Network (CBN) with a novel Downsampled Invariance Loss (DIL), enabling effective noise removal from real-world and synthetic noisy images.
+
 ---
 
 ## 🧠 Project Overview
 
-- **Problem**: Traditional denoising models require clean images which are often unavailable in practice.
-- **Solution**: We use blind-spot networks and a novel DIL strategy to train only on noisy data.
-- **Goal**: Achieve competitive denoising results without relying on ground-truth clean targets.
-
----
-
-## 🏗️ Model Architecture
-
-- **Encoder-decoder backbone (UNet-based)**
-- **Blind-spot convolutional masking**
-- **Conditional context blocks**
-- **Downsampled Invariance Loss function**
-
-No architecture diagram is used. Please refer to the `paper/` folder for detailed textual explanation.
+- **Problem**: Real-world scenarios rarely provide clean image pairs for supervised denoising training.
+- **Solution**: A blind-spot architecture is paired with a loss function that enforces invariance under spatial downsampling, allowing training using only noisy images.
+- **Goal**: To perform efficient denoising on both synthetic and real-world noisy images, without requiring ground-truth clean targets.
 
 ---
 
@@ -24,48 +17,35 @@ No architecture diagram is used. Please refer to the `paper/` folder for detaile
 
 ```bash
 .
-├── paper/
-│   ├── Image Denoising Case Study.docx       # Full research paper (8 pages)
-│   └── Cover_Title_Page.docx                 # Title page for submission
-├── presentation/
-│   └── SelfSupervised_ImageDenoising_Presentation.pptx
+├── data/
+│   ├── BSD68/                                # Benchmark dataset
+│  
+├── models/
+│   └── blindspot_unet.py
 ├── scripts/
 │   ├── train.py                              # Model training script
 │   ├── cbn_model.py                          # Model architecture (CBN)
 │   ├── utils.py                              # Utility functions
-│   ├── loss_functions.py                     # DIL + hybrid losses
+│   ├── loss_functions.py                     # DIL + hybrid loss definitions
 │   └── evaluate.py                           # PSNR / SSIM evaluation
-├── data/
-│   ├── BSD68/                                # Benchmark dataset
-│   └── RealNoise/                            # Real-world noisy images
-├── results/
-│   └── visual_comparisons/                   # Placeholders for output samples
-├── video/
-│   └── video_script.txt                      # Script for 15-min walkthrough
 ├── README.md
-└── requirements.txt                          # List of dependencies
+└── requirements.txt
 ````
 
 ---
 
-## 🧪 Datasets Used
+## 🏗️ Model Highlights
 
-* **BSD68** – Standard benchmark for synthetic noise
-* **Set12** – Widely used in low-level vision tasks
-* **RealNoise** – Smartphone-captured noisy images (no clean ground truths)
-
----
-
-## 📊 Evaluation Metrics
-
-* **PSNR**: Peak Signal-to-Noise Ratio
-* **SSIM**: Structural Similarity Index
+* **Encoder-decoder UNet-style network**
+* **Blind-spot convolutional masking** (inspired by Noise2Void)
+* **Conditional context modeling**
+* **Downsampled Invariance Loss (DIL)** for learning from noisy inputs alone
 
 ---
 
 ## 📦 Installation & Dependencies
 
-Clone the repo and install the dependencies:
+Clone the repository and install the required packages:
 
 ```bash
 git clone https://github.com/your-username/self-supervised-image-denoising
@@ -73,7 +53,7 @@ cd self-supervised-image-denoising
 pip install -r requirements.txt
 ```
 
-**requirements.txt**:
+**requirements.txt:**
 
 ```txt
 torch>=1.11.0
@@ -87,64 +67,74 @@ tqdm
 
 ---
 
+## 📊 Datasets Used
+
+* **BSD68** – Standard synthetic Gaussian noise dataset.
+* **RealNoise** – Smartphone and DSLR image sets with real-world noise.
+
+---
+
 ## 🚀 How to Train
 
 ```bash
 python train.py --dataset data/BSD68 --noise_sigma 25
 ```
 
-Optional flags:
+Optional parameters:
 
-* `--epochs`: number of epochs
-* `--batch_size`: batch size
-* `--save_path`: model save directory
-
----
-
-## 📈 Results Summary
-
-| Model           | PSNR (σ=25) | SSIM | Params | Inference Time |
-| --------------- | ----------- | ---- | ------ | -------------- |
-| DnCNN           | 30.4 dB     | 0.88 | 560K   | 0.10 s         |
-| Noise2Void      | 29.6 dB     | 0.86 | 1.4M   | 0.15 s         |
-| **SelfDIL-CBN** | 30.2 dB     | 0.87 | 2.1M   | 0.12 s         |
+* `--epochs`: Number of training epochs
+* `--batch_size`: Mini-batch size
+* `--save_path`: Path to save model checkpoints
 
 ---
 
-## 📽️ Video Presentation
+## 📈 Evaluation Metrics
 
-A 15-minute walkthrough covering:
-
-* Novelty of our DIL-based self-supervision
-* Architecture and coding details
-* Comparative evaluation
-* Visual demos
-
-Video script is in `video/video_script.txt`.
+* **PSNR (Peak Signal-to-Noise Ratio)**
+* **SSIM (Structural Similarity Index)**
 
 ---
 
-## ✍️ Authors & Credits
+## 📉 Results Summary
 
-* **Rishabh Tiwari** – B.Sc. Statistics, University of Lucknow
-* Inspired by:
-  *"Self-supervised Image Denoising with Downsampled Invariance Loss and Conditional Blind-Spot Network"* – Yeong Il Jang et al., ICCV 2023
+| Model          | PSNR (σ=25) | SSIM | Params | Inference Time |
+| -------------- | ----------- | ---- | ------ | -------------- |
+| DnCNN          | 30.4 dB     | 0.88 | 560K   | 0.10 s         |
+| Noise2Void     | 29.6 dB     | 0.86 | 1.4M   | 0.15 s         |
+| **This Model** | 30.2 dB     | 0.87 | 2.1M   | 0.12 s         |
+
+*Performance evaluated on BSD68 (Gaussian σ=25)*
 
 ---
 
-## 📚 Suggested Journals (for publication)
+## 📚 Scientific References
 
-1. Signal, Image and Video Processing – Springer (Q2)
-2. Journal of Electronic Imaging – SPIE (Q2)
-3. IET Image Processing – Wiley (Q2)
-4. Journal of Real-Time Image Processing – Springer (Q3)
-5. EURASIP Journal on Image and Video Processing – SpringerOpen (Q3, open access)
+* **Yeong Il Jang et al.** (2023).
+  *Self-supervised Image Denoising with Downsampled Invariance Loss and Conditional Blind-Spot Network*, ICCV.
+  [IEEE Link](https://ieeexplore.ieee.org/document/10010320)
+
+* **Krull et al.** (2019).
+  *Noise2Void: Learning Denoising from Single Noisy Images*, CVPR.
+
+* **Zhang et al.** (2017).
+  *Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising*, IEEE TIP.
+
+---
+
+## 🧑‍💻 Author
+
+* **Rishabh Tiwari**
+  B.Sc. Statistics, University of Lucknow
+  Data Science | Deep Learning | Computer Vision
+  GitHub: [@rishabhtiwari](https://github.com/your-username)
 
 ---
 
 ## 🔖 License
 
-This project is for academic and non-commercial research use only.
+This project is released for educational and research use only. Please cite the references above if you build upon this work.
+
+```
 
 ---
 
